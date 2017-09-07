@@ -10,12 +10,14 @@ this.form.statusChanges
 .subscribe((valid) => this.onValidityChange.emit(valid))
 ````
 
-Setting validity of multiple forms from #parent:
+Setting validity of multiple forms in #parent:
 ````javascript
+// -> onValidityChange.emit() handler method
 public handleValidityChange(idx: number, valid: boolean) {
     this.simpleValidity[idx] = valid;
 }
 
+// check validity of multiple forms
 public get isValid(): boolean {
     return this.simpleValidity.every((valid) => valid);
 }
