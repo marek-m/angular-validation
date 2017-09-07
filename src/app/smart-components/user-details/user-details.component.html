@@ -1,0 +1,7 @@
+<div class="{{ isValid ? 'valid' : 'invalid' }} container">
+    <app-basic-data-form
+        *ngFor="let user of users; let i=index"
+        [user]="user"
+        (onValidityChange)="handleValidityChange(i, $event)"
+    ></app-basic-data-form>
+</div>
