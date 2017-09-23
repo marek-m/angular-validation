@@ -1,7 +1,25 @@
-<div class="{{ isValid ? 'valid' : 'invalid' }} container">
-    <app-basic-data-form
-        *ngFor="let user of users; let i=index"
-        [user]="user"
-        (onValidityChange)="handleValidityChange(i, $event)"
-    ></app-basic-data-form>
+<div class="container col-md-12">
+    <div class="{{ form.valid ? 'valid' : 'invalid' }} col-md-7">
+        <app-basic-data-form
+            *ngFor="let user of users; let i=index"
+            [user]="user"
+            (onRemove)="removeUser(user.id)"
+        ></app-basic-data-form>
+            <br>
+            <button (click)="addUser()">ADD[+]</button>
+            <button (click)="removeUser()">REMOVE[+]</button>
+            <br>
+            <app-user-form
+                *ngIf="showUserForm"
+                [user]="user"
+                (onClose)="showUserForm = false"
+            ></app-user-form>
+            valid: {{ form.valid }}
+            <br>
+            dirty: {{ form.dirty }}
+            <br>
+    </div>
+    <div class="col-md-5">
+        <pre>{{ form.value | json }}</pre>
+    </div>
 </div>

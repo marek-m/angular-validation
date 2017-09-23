@@ -1,30 +1,43 @@
-import { Component, OnInit } from '@angular/core';
-import { IUser } from '../../model/user.model';
+import { ChangeDetectionStrategy, Component, OnChanges, OnInit } from '@angular/core';
+import { IUser, IUserData } from '../../model/user.model';
 import { getUsers } from '../../app.component';
+import { FormService } from '../../form.service';
+import { FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-user-details',
     templateUrl: './user-details.component.html',
-    styleUrls: ['./user-details.component.css']
+    styleUrls: ['./user-details.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserDetailsComponent implements OnInit {
 
     public users: IUser[] = [];
-    public simpleValidity: boolean[] = [];
+    public user: IUserData;
+    public showUserForm = true;
+    public asyncUsers$: Observable<IUser[]>;
 
-    constructor() {
+    constructor(private formService: FormService) {
     }
 
     ngOnInit() {
+        this.asyncUsers$ = Observable.of(getUsers).delay(4000);
         this.users = getUsers;
-        this.simpleValidity = this.users.map(() => false);
+        this.user = {
+            name: 'Marek',
+            surname: 'Matyśkiewicz'
+        };
     }
 
-    public handleValidityChange(idx: number, valid: boolean) {
-        this.simpleValidity[idx] = valid;
+    public addUser() {
+        this.users.push({id: new Date().getTime() + ''} as IUser);
     }
 
-    public get isValid(): boolean {
-        return this.simpleValidity.every((valid) => valid);
+    public removeUser(id: string) {
+        this.users = this.users.filter((item) => item.id !== id);
+    }
+    public get form(): FormGroup {
+        return this.formService.form;
     }
 }
