@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { IUser } from '../../model/user.model';
+import { Component, OnChanges, OnInit } from '@angular/core';
+import { IUser, IUserData } from '../../model/user.model';
 import { getUsers } from '../../app.component';
+import { FormService } from '../../form.service';
+import { FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-user-details',
@@ -10,21 +12,28 @@ import { getUsers } from '../../app.component';
 export class UserDetailsComponent implements OnInit {
 
     public users: IUser[] = [];
-    public simpleValidity: boolean[] = [];
+    public user: IUserData;
+    public showUserForm = true;
 
-    constructor() {
+    constructor(private formService: FormService) {
     }
 
     ngOnInit() {
         this.users = getUsers;
-        this.simpleValidity = this.users.map(() => false);
+        this.user = {
+            name: 'Marek',
+            surname: 'Matyśkiewicz'
+        };
     }
 
-    public handleValidityChange(idx: number, valid: boolean) {
-        this.simpleValidity[idx] = valid;
+    public addUser() {
+        this.users.push({id: new Date().getTime() + ''} as IUser);
     }
 
-    public get isValid(): boolean {
-        return this.simpleValidity.every((valid) => valid);
+    public removeUser() {
+        this.users.pop();
+    }
+    public get form(): FormGroup {
+        return this.formService.form;
     }
 }

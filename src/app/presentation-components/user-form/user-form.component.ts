@@ -11,23 +11,22 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/concatMap';
 import 'rxjs/add/operator/mergeMap';
 import { FormArrayComponent } from '../form-component/form-array.component';
+import { FormComponent, IFormControls } from '../form-component/form.component';
 
-interface IFormControls {
-    [name: string]: FormControl;
-}
-export interface IUserFormControls extends IFormControls {
+export interface IUserForm2Controls extends IFormControls {
     name: FormControl;
     surname: FormControl;
-    age: FormControl;
 }
 @Component({
-    selector: 'app-basic-data-form',
-    templateUrl: './basic-data-form.component.html',
-    styleUrls: ['./basic-data-form.component.css']
+    selector: 'app-user-form',
+    templateUrl: './user-form.component.html',
+    styleUrls: ['./user-form.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BasicDataFormComponent extends FormArrayComponent<IUserFormControls> implements OnInit, OnDestroy {
+export class UserFormComponent extends FormComponent<IUserForm2Controls> implements OnInit, OnDestroy {
 
     @Input() public user: IUser;
+    @Output() public onClose = new EventEmitter();
 
     constructor(injector: Injector) {
         super(injector);
@@ -35,20 +34,15 @@ export class BasicDataFormComponent extends FormArrayComponent<IUserFormControls
 
     private subs: Subscription[] = [];
 
-    registerControls(): IUserFormControls {
+    registerControls(): IUserForm2Controls {
         return {
             name: new FormControl(),
-            surname: new FormControl(),
-            age: new FormControl(),
+            surname: new FormControl()
         };
     }
 
     getFormIndex(): string {
-        return this.user.id;
-    }
-
-    getArrayName(): string {
-        return 'users';
+        return 'user-form';
     }
 
     ngOnInit() {

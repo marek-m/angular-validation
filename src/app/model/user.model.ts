@@ -4,3 +4,9 @@ export interface IUser {
     surname: string;
     age: number;
 }
+
+export interface IUserData {
+    name: string;
+    surname: string;
+}
+
