@@ -1,8 +1,5 @@
-import {
-    ChangeDetectionStrategy, Component, EventEmitter, Injector, Input, OnDestroy, OnInit,
-    Output
-} from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import { IUser } from '../../model/user.model';
@@ -11,10 +8,9 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/concatMap';
 import 'rxjs/add/operator/mergeMap';
 import { FormArrayComponent } from '../form-component/form-array.component';
+import { GeneratorService } from '../../smart-components/genarator.service';
+import { AfterFormCreate, IFormControls } from '../form-component/abstract-form.component';
 
-interface IFormControls {
-    [name: string]: FormControl;
-}
 export interface IUserFormControls extends IFormControls {
     name: FormControl;
     surname: FormControl;
@@ -23,19 +19,21 @@ export interface IUserFormControls extends IFormControls {
 @Component({
     selector: 'app-basic-data-form',
     templateUrl: './basic-data-form.component.html',
-    styleUrls: ['./basic-data-form.component.css']
+    styleUrls: ['./basic-data-form.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BasicDataFormComponent extends FormArrayComponent<IUserFormControls> implements OnInit, OnDestroy {
+export class BasicDataFormComponent extends FormArrayComponent<IUserFormControls> implements OnInit, OnDestroy, AfterFormCreate {
 
     @Input() public user: IUser;
+    @Output() public onRemove: EventEmitter<string> = new EventEmitter();
 
-    constructor(injector: Injector) {
-        super(injector);
+    constructor(private generator: GeneratorService) {
+        super();
     }
 
     private subs: Subscription[] = [];
 
-    registerControls(): IUserFormControls {
+    public setFormControls(): IUserFormControls {
         return {
             name: new FormControl(),
             surname: new FormControl(),
@@ -43,20 +41,17 @@ export class BasicDataFormComponent extends FormArrayComponent<IUserFormControls
         };
     }
 
-    getFormIndex(): string {
-        return this.user.id;
+    public afterFormCreate(form: FormGroup) {
+        form.patchValue(this.user);
+        this.registerForm('users', this.user.id);
     }
 
-    getArrayName(): string {
-        return 'users';
-    }
-
-    ngOnInit() {
+    public ngOnInit() {
         super.ngOnInit();
-        this.form.patchValue(this.user);
+        // write some op here
     }
 
-    ngOnDestroy() {
+    public ngOnDestroy() {
         super.ngOnDestroy();
         this.subs.forEach((sub) => sub.unsubscribe());
     }

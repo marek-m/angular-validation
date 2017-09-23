@@ -32,7 +32,11 @@ export class FormService {
             this.form.setControl(arrayName, this.formBuilder.array([]));
             formArray = <FormArray>this.form.controls[arrayName];
         }
+        console.log(formArray.getRawValue());
         const removeIndex = formArray.getRawValue().findIndex((item) => item.publicId === index);
         formArray.removeAt(removeIndex);
+        if (formArray.length === 0) {
+            this.form.removeControl(arrayName);
+        }
     }
 }

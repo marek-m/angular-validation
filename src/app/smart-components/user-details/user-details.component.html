@@ -3,6 +3,7 @@
         <app-basic-data-form
             *ngFor="let user of users; let i=index"
             [user]="user"
+            (onRemove)="removeUser(user.id)"
         ></app-basic-data-form>
             <br>
             <button (click)="addUser()">ADD[+]</button>

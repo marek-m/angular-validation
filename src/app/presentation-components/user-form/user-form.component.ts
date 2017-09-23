@@ -1,8 +1,5 @@
-import {
-    ChangeDetectionStrategy, Component, EventEmitter, Injector, Input, OnDestroy, OnInit,
-    Output
-} from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import { IUser } from '../../model/user.model';
@@ -10,8 +7,8 @@ import { Subscription } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/concatMap';
 import 'rxjs/add/operator/mergeMap';
-import { FormArrayComponent } from '../form-component/form-array.component';
-import { FormComponent, IFormControls } from '../form-component/form.component';
+import { AfterFormCreate, IFormControls } from '../form-component/abstract-form.component';
+import { FormComponent } from '../form-component/form.component';
 
 export interface IUserForm2Controls extends IFormControls {
     name: FormControl;
@@ -23,35 +20,23 @@ export interface IUserForm2Controls extends IFormControls {
     styleUrls: ['./user-form.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserFormComponent extends FormComponent<IUserForm2Controls> implements OnInit, OnDestroy {
-
+export class UserFormComponent extends FormComponent<IUserForm2Controls> implements OnInit, OnDestroy, AfterFormCreate {
     @Input() public user: IUser;
     @Output() public onClose = new EventEmitter();
 
-    constructor(injector: Injector) {
-        super(injector);
+    constructor() {
+        super();
     }
 
-    private subs: Subscription[] = [];
-
-    registerControls(): IUserForm2Controls {
+    setFormControls(): IUserForm2Controls {
         return {
             name: new FormControl(),
             surname: new FormControl()
         };
     }
 
-    getFormIndex(): string {
-        return 'user-form';
-    }
-
-    ngOnInit() {
-        super.ngOnInit();
-        this.form.patchValue(this.user);
-    }
-
-    ngOnDestroy() {
-        super.ngOnDestroy();
-        this.subs.forEach((sub) => sub.unsubscribe());
+    afterFormCreate(form: FormGroup): void {
+        form.patchValue(this.user);
+        this.registerForm('user-single-form');
     }
 }
