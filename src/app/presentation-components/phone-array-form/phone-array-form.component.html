@@ -1,0 +1,18 @@
+<div class="container col-md-7">
+    <form [formGroup]="form" novalidate>
+        <table cellspacing="0">
+            <tr>
+                <td>
+                    <md-form-field>
+                        <input mdInput placeholder="Phone number" [formControl]="controls.number" required>
+                    </md-form-field>
+                </td>
+                <td>
+                    <button md-icon-button>
+                        <md-icon>highlight_off</md-icon>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>

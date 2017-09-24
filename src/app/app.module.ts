@@ -1,27 +1,51 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { Injector, NgModule } from '@angular/core';
+import { ApplicationRef, ChangeDetectorRef, Injector, NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
-import { UserDetailsComponent } from './smart-components/user-details/user-details.component';
-import { BasicDataFormComponent } from './presentation-components/basic-data-form/basic-data-form.component';
+import { AddressArrayFormComponent } from './presentation-components/address-array-form/address-array-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormService } from './form.service';
 import { UserFormComponent } from './presentation-components/user-form/user-form.component';
-import { GeneratorService } from './smart-components/genarator.service';
 import { ServiceInjector } from './service-injector';
+import {
+    MdButtonModule,
+    MdFormFieldModule,
+    MdIconModule,
+    MdInputModule,
+    MdOptionModule,
+    MdSelectModule,
+    MdStepperModule
+} from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { UserContainerComponent } from './smart-components/containers/user-container.component';
+import { UsersService } from './users.service';
+import { PhoneArrayFormComponent } from './presentation-components/phone-array-form/phone-array-form.component';
+import { AddressesSmartComponent } from './smart-components/addresses-smart-component/addresses-smart.component';
+import { AddressesContainerComponent } from './smart-components/addresses-container-component/addresses-container.component';
 
 @NgModule({
     declarations: [
         AppComponent,
-        UserDetailsComponent,
-        BasicDataFormComponent,
+        UserContainerComponent,
+        AddressArrayFormComponent,
+        PhoneArrayFormComponent,
+        AddressesSmartComponent,
+        AddressesContainerComponent,
         UserFormComponent
     ],
     imports: [
+        MdStepperModule,
+        MdFormFieldModule,
+        MdButtonModule,
+        MdInputModule,
+        MdIconModule,
+        MdSelectModule,
+        MdOptionModule,
         BrowserModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        BrowserAnimationsModule
     ],
-    providers: [FormService, GeneratorService],
+    providers: [FormService, UsersService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

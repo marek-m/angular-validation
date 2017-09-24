@@ -1,4 +1,4 @@
-import { OnDestroy, OnInit } from '@angular/core';
+import { Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { FormService } from '../../form.service';
 import { ServiceInjector } from '../../service-injector';
@@ -12,6 +12,8 @@ export interface AfterFormCreate {
 }
 
 export abstract class AbstractFormComponent<T extends IFormControls> implements OnInit, OnDestroy {
+    @Input() public formReady: any;
+
     protected form: FormGroup;
     protected controls: T;
     private formBuilder: FormBuilder;
@@ -27,6 +29,7 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
 
     public ngOnInit() {
         this.createForm();
+        this.formReady = {};
     }
 
     public ngOnDestroy() {
@@ -67,6 +70,7 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
         this.registeredArrayName = arrayName;
         this.registeredFormIndex = formIndex;
         this.registered = true;
+
     }
 
     private createForm() {

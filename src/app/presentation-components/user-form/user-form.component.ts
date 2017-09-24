@@ -9,6 +9,7 @@ import 'rxjs/add/operator/concatMap';
 import 'rxjs/add/operator/mergeMap';
 import { AfterFormCreate, IFormControls } from '../form-component/abstract-form.component';
 import { FormComponent } from '../form-component/form.component';
+import { FormService } from '../../form.service';
 
 export interface IUserForm2Controls extends IFormControls {
     name: FormControl;
@@ -23,10 +24,6 @@ export interface IUserForm2Controls extends IFormControls {
 export class UserFormComponent extends FormComponent<IUserForm2Controls> implements OnInit, OnDestroy, AfterFormCreate {
     @Input() public user: IUser;
     @Output() public onClose = new EventEmitter();
-
-    constructor() {
-        super();
-    }
 
     setFormControls(): IUserForm2Controls {
         return {

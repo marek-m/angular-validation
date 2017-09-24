@@ -1,0 +1,44 @@
+<div class="container col-md-10">
+<md-vertical-stepper [linear]="false">
+    <md-step [stepControl]="form">
+        <ng-template mdStepLabel>Addresses <span>valid: {{ form.get('addresses')?.valid }} dirty {{ form.get('addresses')?.dirty }}</span></ng-template>
+        <addresses-container
+            [addresses]="addresses$ | async"
+        ></addresses-container>
+    </md-step>
+    <md-step [stepControl]="form">
+        <ng-template mdStepLabel>Phones <span>valid: {{ form.get('phones')?.valid }} dirty {{ form.get('phones')?.dirty }}</span></ng-template>
+        <phone-array-form
+            *ngFor="let phone of phones$ | async"
+            [phone]="phone"
+        ></phone-array-form>
+    </md-step>
+
+    <!--<md-step [stepControl]="form" [completed]="false">-->
+        <!--<form [formGroup]="form">-->
+            <!--<ng-template mdStepLabel>User basic data</ng-template>-->
+            <!--<md-form-field>-->
+                <!--<input mdInput placeholder="Address" required>-->
+            <!--</md-form-field>-->
+            <!--<div>-->
+                <!--<button md-button mdStepperPrevious>Back</button>-->
+                <!--<button md-button mdStepperNext>Next</button>-->
+            <!--</div>-->
+        <!--</form>-->
+    <!--</md-step>-->
+    <md-step [completed]="false">
+        <ng-template mdStepLabel>Done</ng-template>
+        You are now done.
+    </md-step>
+</md-vertical-stepper>
+</div>
+<div>
+    <button md-button (click)="showValue()" *ngIf="this.form.valid">Back</button>
+</div>
+<div class="container col-md-2">
+    {{ formValid }}
+    <pre> DIRTY: {{ formService.form.dirty }}</pre>
+    <pre> VALID: {{ formService.form.valid }}</pre>
+    <pre>{{formService.form.value | json }}</pre>
+
+</div>
