@@ -1,5 +1,5 @@
 <div class="container col-md-12">
-    <div class="{{ form.valid ? 'valid' : 'invalid' }} col-md-7">
+    <div class="{{ form.valid ? 'valid' : 'invalid' }} col-md-9">
         <app-basic-data-form
             *ngFor="let user of users; let i=index"
             [user]="user"
@@ -19,7 +19,7 @@
             dirty: {{ form.dirty }}
             <br>
     </div>
-    <div class="col-md-5">
+    <div class="col-md-3">
         <pre>{{ form.value | json }}</pre>
     </div>
 </div>

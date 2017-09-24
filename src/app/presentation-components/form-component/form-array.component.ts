@@ -1,7 +1,7 @@
 import { OnDestroy, OnInit } from '@angular/core';
 import { AbstractFormComponent, IFormControls } from './abstract-form.component';
 
-export abstract class FormArrayComponent<T extends IFormControls> extends AbstractFormComponent<T> implements OnInit, OnDestroy {
+export abstract class FormArrayComponent<T extends IFormControls> extends AbstractFormComponent<T> {
     constructor() {
         super();
     }

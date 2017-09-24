@@ -25,11 +25,11 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
         this.formService = ServiceInjector.injector.get(FormService);
     }
 
-    ngOnInit() {
+    public ngOnInit() {
         this.createForm();
     }
 
-    ngOnDestroy() {
+    public ngOnDestroy() {
         this.unregister();
     }
 
@@ -37,12 +37,6 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
     protected abstract registerForm(formIndex: string, arrayName?: string): void;
 
     protected afterFormCreate(form: FormGroup) {
-    }
-
-    private createForm() {
-        this.controls = this.setFormControls();
-        this.form = this.formBuilder.group(this.controls);
-        this.afterFormCreate(this.form);
     }
 
     protected registerSingleForm(formIndex: string) {
@@ -73,6 +67,12 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
         this.registeredArrayName = arrayName;
         this.registeredFormIndex = formIndex;
         this.registered = true;
+    }
+
+    private createForm() {
+        this.controls = this.setFormControls();
+        this.form = this.formBuilder.group(this.controls);
+        this.afterFormCreate(this.form);
     }
 
     private unregister() {
