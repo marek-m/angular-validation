@@ -1,13 +1,14 @@
 import { Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { FormService } from '../../form.service';
+import { values } from 'lodash';
+import { FormService } from './form.service';
 import { ServiceInjector } from '../../service-injector';
 
 export interface IFormControls {
     [name: string]: FormControl;
 }
 
-export interface AfterFormCreate {
+export interface IAfterFormCreate {
     afterFormCreate(form: FormGroup): void;
 }
 
@@ -20,6 +21,7 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
     private formService: FormService;
     private registeredArrayName: string;
     private registeredFormIndex: string;
+    private registeredParentIndex: string;
     private registered = false;
 
     constructor() {
@@ -36,13 +38,13 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
         this.unregister();
     }
 
-    abstract setFormControls(): T;
+    protected abstract setFormControls(): T;
     protected abstract registerForm(formIndex: string, arrayName?: string): void;
 
     protected afterFormCreate(form: FormGroup) {
     }
 
-    protected registerSingleForm(formIndex: string) {
+    protected registerSingleForm(formIndex: string, parentIndex?: string) {
         if (!this.form) {
             throw new Error('Form not created yet');
         }
@@ -50,41 +52,46 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
             this.formService.removeForm(formIndex);
         }
 
-        this.formService.addForm(formIndex, this.form);
+        this.formService.addForm(formIndex, this.form, parentIndex);
         this.registeredFormIndex = formIndex;
         this.registeredArrayName = null;
+        this.registeredParentIndex = parentIndex;
         this.registered = true;
     }
 
-    protected registerArrayForm(arrayName: string, formIndex: string) {
+    protected registerArrayForm(arrayName: string, formIndex: string, parentIndex?: string) {
         if (!this.form) {
             throw new Error('Form not created yet');
         }
         if (this.registered) {
-            this.formService.removeFromArray(this.registeredArrayName, this.registeredFormIndex);
+            this.formService.removeFromArray(this.registeredArrayName, this.registeredFormIndex, parentIndex);
         }
 
         this.form.addControl('publicId', new FormControl(formIndex));
-        this.formService.addToArray(arrayName, this.form);
+        this.formService.addToArray(arrayName, this.form, parentIndex);
 
         this.registeredArrayName = arrayName;
         this.registeredFormIndex = formIndex;
+        this.registeredParentIndex = parentIndex;
         this.registered = true;
+    }
 
+    protected getControlsArray(): Array<FormControl> {
+        return Object.keys(this.controls).map((item) => this.controls[item]);
     }
 
     private createForm() {
         this.controls = this.setFormControls();
-        this.form = this.formBuilder.group(this.controls);
+        this.form = this.formBuilder.group( this.controls );
         this.afterFormCreate(this.form);
     }
 
     private unregister() {
         if (this.registered) {
             if (this.registeredArrayName) {
-                this.formService.removeFromArray(this.registeredArrayName, this.registeredFormIndex);
+                this.formService.removeFromArray(this.registeredArrayName, this.registeredFormIndex, this.registeredParentIndex);
             } else {
-                this.formService.removeForm(this.registeredFormIndex);
+                this.formService.removeForm(this.registeredFormIndex, this.registeredParentIndex);
             }
         }
     }

@@ -3,13 +3,11 @@ import { FormControl, FormGroup } from '@angular/forms';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
 import { IUser } from '../../model/user.model';
-import { Subscription } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/concatMap';
 import 'rxjs/add/operator/mergeMap';
-import { AfterFormCreate, IFormControls } from '../form-component/abstract-form.component';
+import { IAfterFormCreate, IFormControls } from '../form-component/abstract-form.component';
 import { FormComponent } from '../form-component/form.component';
-import { FormService } from '../../form.service';
 
 export interface IUserForm2Controls extends IFormControls {
     name: FormControl;
@@ -21,7 +19,7 @@ export interface IUserForm2Controls extends IFormControls {
     styleUrls: ['./user-form.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserFormComponent extends FormComponent<IUserForm2Controls> implements OnInit, OnDestroy, AfterFormCreate {
+export class UserFormComponent extends FormComponent<IUserForm2Controls> implements OnInit, OnDestroy, IAfterFormCreate {
     @Input() public user: IUser;
     @Output() public onClose = new EventEmitter();
 

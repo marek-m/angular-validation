@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { IPhone } from '../../model/user.model';
-import { FormArrayComponent } from '../form-component/form-array.component';
-import { AfterFormCreate, IFormControls } from '../form-component/abstract-form.component';
+import { IFormControls } from '../form-component';
+import { FormArrayComponent, IAfterFormCreate } from '../form-component';
 
 export interface IPhoneFormControls extends IFormControls {
     number: FormControl;
@@ -13,7 +13,7 @@ export interface IPhoneFormControls extends IFormControls {
     styleUrls: ['./phone-array-form.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PhoneArrayFormComponent extends FormArrayComponent<IPhoneFormControls> implements OnInit, OnDestroy, AfterFormCreate {
+export class PhoneArrayFormComponent extends FormArrayComponent<IPhoneFormControls> implements OnInit, OnDestroy, IAfterFormCreate {
     @Input() public phone: IPhone;
     @Output() public onRemove: EventEmitter<string> = new EventEmitter();
 

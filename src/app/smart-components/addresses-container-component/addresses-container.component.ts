@@ -6,7 +6,6 @@ import { IAddress } from '../../model/user.model';
     templateUrl: './addresses-container.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class AddressesContainerComponent {
     @Input() public addresses: IAddress[];
 

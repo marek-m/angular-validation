@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnI
 import { FormControl, FormGroup } from '@angular/forms';
 import { IAddress } from '../../model/user.model';
 import { FormArrayComponent } from '../form-component/form-array.component';
-import { AfterFormCreate, IFormControls } from '../form-component/abstract-form.component';
+import { IAfterFormCreate, IFormControls } from '../form-component/abstract-form.component';
 
 export interface IAddressFormControls extends IFormControls {
     city: FormControl;
@@ -15,7 +15,7 @@ export interface IAddressFormControls extends IFormControls {
     styleUrls: ['./address-array-form.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddressArrayFormComponent extends FormArrayComponent<IAddressFormControls> implements OnInit, OnDestroy, AfterFormCreate {
+export class AddressArrayFormComponent extends FormArrayComponent<IAddressFormControls> implements OnInit, OnDestroy, IAfterFormCreate {
     @Input() public address: IAddress;
     @Output() public onRemove: EventEmitter<string> = new EventEmitter();
 

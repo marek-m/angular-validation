@@ -4,7 +4,7 @@ import { IAddress, IPhone, IUser } from '../../model/user.model';
 import { FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
-import { FormService } from '../../form.service';
+import { FormService } from '../../presentation-components/form-component/form.service';
 
 @Component({
     selector: 'user-container',
