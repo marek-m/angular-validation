@@ -1,30 +1,49 @@
 import {Injectable} from '@angular/core';
-import {AbstractControl, FormArray, FormBuilder, FormGroup} from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 
 @Injectable()
 export class FormService {
     public form: FormGroup;
     public formChange$: Subject<FormGroup> = new Subject();
-
+    private formUUIDGenerator: IterableIterator<string>;
+    private UNIQUE_NAME = 'formIndex';
     constructor(private formBuilder: FormBuilder) {
         this.form = this.formBuilder.group({});
         this.formChange$.next(this.form);
+        this.formUUIDGenerator = this.generateUniqueId();
     }
 
-    public addForm(index: string, controls: FormGroup, parentIndex?: string) {
+    /**
+     * Adds form to global FormGroup.
+     * @param {FormGroup} controls
+     * @param {string} parentIndex
+     * @returns {generated form unique-id}
+     */
+    public addForm(formName: string, controls: FormGroup, parentIndex?: string): string {
         const formGroup = this.getFormGroup(parentIndex);
-        formGroup.addControl(index, controls);
+        const uniqueId = this.getUniqueId();
+
+        const uniqueCtrl = new FormControl(uniqueId);
+        uniqueCtrl.disable();
+        controls.addControl(this.UNIQUE_NAME, uniqueCtrl);
+        formGroup.addControl(formName, controls);
         this.formChange$.next(this.form);
+        return uniqueId;
     }
 
     public removeForm(index: string, parentIndex?: string) {
         const formGroup = this.getFormGroup(parentIndex);
-        formGroup.removeControl(index);
+        Object.keys(formGroup.controls).some((controlKey: string) => {
+            if (formGroup.get(controlKey).get(this.UNIQUE_NAME).value === index) {
+                formGroup.removeControl(controlKey);
+                return true;
+            }
+        });
         this.formChange$.next(this.form);
     }
 
-    public addToArray(arrayName: string, controls: FormGroup, parentIndex?: string) {
+    public addToArray(arrayName: string, controls: FormGroup, parentIndex?: string): string {
         const formGroup = this.getFormGroup(parentIndex);
         let formArray = <FormArray>formGroup.controls[arrayName];
         if (!formArray) {
@@ -32,8 +51,13 @@ export class FormService {
             formArray = <FormArray>formGroup.controls[arrayName];
             this.formChange$.next(this.form);
         }
+        const uniqueId = this.getUniqueId();
+        const uniqueCtrl = new FormControl(uniqueId);
+        uniqueCtrl.disable();
+        controls.addControl(this.UNIQUE_NAME, uniqueCtrl);
         formArray.push(controls);
         this.formChange$.next(this.form);
+        return uniqueId;
     }
 
     public removeFromArray(arrayName: string, index: string, parentIndex?: string) {
@@ -42,7 +66,7 @@ export class FormService {
         if (!formArray) {
             return;
         }
-        const removeIndex = formArray.getRawValue().findIndex((item) => item.publicId === index);
+        const removeIndex = formArray.getRawValue().findIndex((item) => item[this.UNIQUE_NAME] === index);
         formArray.removeAt(removeIndex);
         if (formArray.length === 0) {
             formGroup.removeControl(arrayName);
@@ -50,9 +74,13 @@ export class FormService {
         this.formChange$.next(this.form);
     }
 
+    private getUniqueId() {
+        return this.formUUIDGenerator.next().value;
+    }
+
     private searchForm(formIndex: string, parent: FormGroup): AbstractControl {
-        if (parent.contains(formIndex)) {
-            return parent.get(formIndex);
+        if (parent.contains(this.UNIQUE_NAME) && parent.get(this.UNIQUE_NAME).value === formIndex) {
+            return parent;
         } else {
             let result = null;
             Object.keys(parent.controls).forEach((controlKey: string) => {
@@ -69,7 +97,7 @@ export class FormService {
     }
 
     private searchFormArray(formIndex: string, parent: FormArray) {
-        const idx = parent.getRawValue().findIndex((item) => item.publicId === formIndex);
+        const idx = parent.getRawValue().findIndex((item) => item[this.UNIQUE_NAME] === formIndex);
         if (idx > -1) {
             return parent.at(idx);
         } else {
@@ -91,11 +119,17 @@ export class FormService {
         if (parentIndex) {
             result = <FormGroup>this.searchForm(parentIndex, this.form);
             if (!result) {
-                throw new Error(`Cannot find parent FormGroup for index '${parentIndex}'`);
+                throw new Error(`Cannot find parent FormGroup for index ${parentIndex}`);
             }
         } else {
             result = this.form;
         }
         return result;
+    }
+
+    private * generateUniqueId() {
+        for (let i = 10000; i < 100000000; i++) {
+            yield `uuid-${i}`;
+        }
     }
 }

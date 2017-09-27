@@ -29,7 +29,7 @@ export class AddressArrayFormComponent extends FormArrayComponent<IAddressFormCo
 
     public afterFormCreate(form: FormGroup) {
         form.patchValue(this.address);
-        this.registerForm('addresses', this.address.id);
+        this.registerForm('addresses');
     }
 
     public ngOnInit() {

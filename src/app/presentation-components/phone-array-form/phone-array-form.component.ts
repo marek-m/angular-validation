@@ -25,7 +25,7 @@ export class PhoneArrayFormComponent extends FormArrayComponent<IPhoneFormContro
 
     public afterFormCreate(form: FormGroup) {
         form.patchValue(this.phone);
-        this.registerForm('phones', this.phone.id);
+        this.registerForm('phones');
     }
 
     public ngOnInit() {

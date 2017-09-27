@@ -17,10 +17,14 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
 
     protected form: FormGroup;
     protected controls: T;
+    /**
+     * Unique form index. Unique for global form context.
+     */
+    protected formUUID: string;
     private formBuilder: FormBuilder;
     private formService: FormService;
     private registeredArrayName: string;
-    private registeredFormIndex: string;
+    private registeredFormName: string;
     private registeredParentIndex: string;
     private registered = false;
 
@@ -39,59 +43,65 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
     }
 
     protected abstract setFormControls(): T;
-    protected abstract registerForm(formIndex: string, arrayName?: string): void;
+
+    protected abstract registerForm(formName: string, arrayName?: string): void;
+
+    protected includeFormValues(): { [key: string]: any } {
+        return {};
+    }
 
     protected afterFormCreate(form: FormGroup) {
     }
 
-    protected registerSingleForm(formIndex: string, parentIndex?: string) {
+    protected registerSingleForm(formName: string, parentIndex?: string) {
         if (!this.form) {
             throw new Error('Form not created yet');
         }
         if (this.registered) {
-            this.formService.removeForm(formIndex);
+            this.formService.removeForm(formName);
         }
 
-        this.formService.addForm(formIndex, this.form, parentIndex);
-        this.registeredFormIndex = formIndex;
+        this.formUUID = this.formService.addForm(formName, this.form, parentIndex);
         this.registeredArrayName = null;
+        this.registeredFormName = formName;
         this.registeredParentIndex = parentIndex;
         this.registered = true;
     }
 
-    protected registerArrayForm(arrayName: string, formIndex: string, parentIndex?: string) {
+    protected registerArrayForm(arrayName: string, parentIndex?: string) {
         if (!this.form) {
             throw new Error('Form not created yet');
         }
         if (this.registered) {
-            this.formService.removeFromArray(this.registeredArrayName, this.registeredFormIndex, parentIndex);
+            this.formService.removeFromArray(this.registeredArrayName, this.formUUID, parentIndex);
         }
 
-        this.form.addControl('publicId', new FormControl(formIndex));
-        this.formService.addToArray(arrayName, this.form, parentIndex);
+        this.formUUID = this.formService.addToArray(arrayName, this.form, parentIndex);
 
         this.registeredArrayName = arrayName;
-        this.registeredFormIndex = formIndex;
         this.registeredParentIndex = parentIndex;
         this.registered = true;
-    }
-
-    protected getControlsArray(): Array<FormControl> {
-        return Object.keys(this.controls).map((item) => this.controls[item]);
     }
 
     private createForm() {
         this.controls = this.setFormControls();
-        this.form = this.formBuilder.group( this.controls );
+        this.form = this.formBuilder.group(this.controls);
+        const additionalFormData = this.includeFormValues();
+        if (Object.keys(additionalFormData).length > 0) {
+            Object.keys(additionalFormData).forEach((key) => {
+                this.form.addControl(key, new FormControl(additionalFormData[key]));
+            });
+
+        }
         this.afterFormCreate(this.form);
     }
 
     private unregister() {
         if (this.registered) {
             if (this.registeredArrayName) {
-                this.formService.removeFromArray(this.registeredArrayName, this.registeredFormIndex, this.registeredParentIndex);
+                this.formService.removeFromArray(this.registeredArrayName, this.formUUID, this.registeredParentIndex);
             } else {
-                this.formService.removeForm(this.registeredFormIndex, this.registeredParentIndex);
+                this.formService.removeForm(this.formUUID, this.registeredParentIndex);
             }
         }
     }
