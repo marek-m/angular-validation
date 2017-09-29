@@ -15,6 +15,7 @@ export interface IPhoneFormControls extends IFormControls {
 })
 export class PhoneArrayFormComponent extends FormArrayComponent<IPhoneFormControls> implements OnInit, OnDestroy, IAfterFormCreate {
     @Input() public phone: IPhone;
+    @Input() public parentId: string;
     @Output() public onRemove: EventEmitter<string> = new EventEmitter();
 
     public setFormControls(): IPhoneFormControls {
@@ -25,7 +26,7 @@ export class PhoneArrayFormComponent extends FormArrayComponent<IPhoneFormContro
 
     public afterFormCreate(form: FormGroup) {
         form.patchValue(this.phone);
-        this.registerForm('phones');
+        this.registerForm('phones', this.parentId);
     }
 
     public ngOnInit() {

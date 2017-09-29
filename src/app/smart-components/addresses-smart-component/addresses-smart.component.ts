@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { IAddress } from '../../model/user.model';
+import { IAddress, IPhone } from '../../model/user.model';
 
 @Component({
     selector: 'addresses-smart-component',
@@ -8,6 +8,7 @@ import { IAddress } from '../../model/user.model';
 })
 export class AddressesSmartComponent {
     @Input() public addresses: IAddress[];
+    @Input() public phones: IPhone[];
     @Output() public onRemove: EventEmitter<string> = new EventEmitter();
     @Output() public onAdd = new EventEmitter();
 }

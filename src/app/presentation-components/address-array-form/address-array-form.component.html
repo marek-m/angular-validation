@@ -25,6 +25,14 @@
                     </button>
                 </td>
             </tr>
+            <tr *ngFor="let phone of phones">
+                <td>
+                <phone-array-form
+                    [phone]="phone"
+                    [parentId]="formUUID">
+                </phone-array-form>
+                </td>
+            </tr>
         </table>
     </form>
 </div>

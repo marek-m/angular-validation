@@ -1,6 +1,7 @@
 <address-array-form
     *ngFor="let address of addresses"
     [address]="address"
+    [phones]="phones"
     (onRemove)="onRemove.next(address.id)"
 ></address-array-form>
 <div class="col-md-7">

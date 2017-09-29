@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { IAddress } from '../../model/user.model';
+import { IAddress, IPhone } from '../../model/user.model';
 import { FormArrayComponent } from '../form-component/form-array.component';
 import { IAfterFormCreate, IFormControls } from '../form-component/abstract-form.component';
 
@@ -17,6 +17,7 @@ export interface IAddressFormControls extends IFormControls {
 })
 export class AddressArrayFormComponent extends FormArrayComponent<IAddressFormControls> implements OnInit, OnDestroy, IAfterFormCreate {
     @Input() public address: IAddress;
+    @Input() public phones: IPhone[];
     @Output() public onRemove: EventEmitter<string> = new EventEmitter();
 
     public setFormControls(): IAddressFormControls {

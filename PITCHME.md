@@ -9,3 +9,11 @@
 <span style="color:gray">GitHub, GitLab, Bitbucket, Gitea, Gogs, and GitBucket</span>
 
 ---
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, world!")
+}
+---

@@ -1,10 +1,12 @@
-<div class="container col-md-10">
+<div class="container col-md-9">
 <md-vertical-stepper [linear]="false">
     <md-step [stepControl]="form">
         <ng-template mdStepLabel>Addresses <span>valid: {{ form.get('addresses')?.valid }} dirty {{ form.get('addresses')?.dirty }}</span></ng-template>
         <addresses-container
             [addresses]="addresses$ | async"
+            [phones]="phones$ | async"
         ></addresses-container>
+
     </md-step>
     <md-step [stepControl]="form">
         <ng-template mdStepLabel>Phones <span>valid: {{ form.get('phones')?.valid }} dirty {{ form.get('phones')?.dirty }}</span></ng-template>
@@ -35,7 +37,7 @@
 <div>
     <button md-button (click)="showValue()" *ngIf="this.form.valid">Back</button>
 </div>
-<div class="container col-md-2">
+<div class="container col-md-3">
     {{ formValid }}
     <pre> DIRTY: {{ formService.form.dirty }}</pre>
     <pre> VALID: {{ formService.form.valid }}</pre>

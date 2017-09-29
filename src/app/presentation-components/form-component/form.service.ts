@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import {Subject} from 'rxjs/Subject';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class FormService {
@@ -78,46 +78,37 @@ export class FormService {
         return this.formUUIDGenerator.next().value;
     }
 
-    private searchForm(formIndex: string, parent: FormGroup): AbstractControl {
-        if (parent.contains(this.UNIQUE_NAME) && parent.get(this.UNIQUE_NAME).value === formIndex) {
-            return parent;
+    private extractControls(list: FormControl[], control: AbstractControl) {
+        if (control instanceof FormControl) {
+            list.push(control);
         } else {
-            let result = null;
-            Object.keys(parent.controls).forEach((controlKey: string) => {
-                const nestedParent = parent.get(controlKey);
-                if (nestedParent instanceof FormGroup) {
-                    result = this.searchForm(formIndex, nestedParent);
-                }
-                if (nestedParent instanceof FormArray) {
-                    result = this.searchFormArray(formIndex, nestedParent);
-                }
-            });
-            return result;
+            if (control instanceof FormGroup) {
+                Object.keys(control.controls).forEach((key) => {
+                    this.extractControls(list, control.get(key));
+                });
+            }
+            if (control instanceof FormArray) {
+                control.controls.forEach((child) => {
+                    this.extractControls(list, child);
+                });
+            }
         }
     }
 
-    private searchFormArray(formIndex: string, parent: FormArray) {
-        const idx = parent.getRawValue().findIndex((item) => item[this.UNIQUE_NAME] === formIndex);
-        if (idx > -1) {
-            return parent.at(idx);
-        } else {
-            let result = null;
-            parent.controls.forEach((control) => {
-                if (control instanceof FormArray) {
-                    result = this.searchFormArray(formIndex, control);
-                }
-                if (control instanceof FormGroup) {
-                    result = this.searchForm(formIndex, control);
-                }
-            });
-            return result;
+    private searchForm(formIndex: string): FormGroup {
+        const list: FormControl[] = [];
+        this.extractControls(list, this.form);
+        for (const ctrl of list) {
+            if (ctrl.value === formIndex && ctrl.parent instanceof FormGroup) {
+                return ctrl.parent;
+            }
         }
     }
 
     private getFormGroup(parentIndex?: string): FormGroup {
         let result: FormGroup = null;
         if (parentIndex) {
-            result = <FormGroup>this.searchForm(parentIndex, this.form);
+            result = <FormGroup>this.searchForm(parentIndex);
             if (!result) {
                 throw new Error(`Cannot find parent FormGroup for index ${parentIndex}`);
             }
