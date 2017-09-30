@@ -1,7 +1,7 @@
 import { Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { values } from 'lodash';
-import { FormService } from './form.service';
+import { FORM_INDEX_UNIQUE_NAME, FormService } from './form.service';
 import { ServiceInjector } from '../../service-injector';
 
 export interface IFormControls {
@@ -44,7 +44,7 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
 
     protected abstract setFormControls(): T;
 
-    protected abstract registerForm(formName: string, arrayName?: string): void;
+    protected abstract registerForm(formName: string, parentIndex?: string | FormGroup): void;
 
     protected includeFormValues(): { [key: string]: any } {
         return {};
@@ -53,22 +53,29 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
     protected afterFormCreate(form: FormGroup) {
     }
 
-    protected registerSingleForm(formName: string, parentIndex?: string) {
+    private getIndex(index: string | FormGroup) {
+        if (index instanceof FormGroup) {
+            const uniqueCtrl = index.get(FORM_INDEX_UNIQUE_NAME);
+            return uniqueCtrl && uniqueCtrl.value || '';
+        }
+        return index;
+    }
+
+    protected registerSingleForm(formName: string, parentIndex?: string | FormGroup) {
         if (!this.form) {
             throw new Error('Form not created yet');
         }
         if (this.registered) {
             this.formService.removeForm(formName);
         }
-
         this.formUUID = this.formService.addForm(formName, this.form, parentIndex);
         this.registeredArrayName = null;
         this.registeredFormName = formName;
-        this.registeredParentIndex = parentIndex;
+        this.registeredParentIndex = this.getIndex(parentIndex);
         this.registered = true;
     }
 
-    protected registerArrayForm(arrayName: string, parentIndex?: string) {
+    protected registerArrayForm(arrayName: string, parentIndex?: string | FormGroup) {
         if (!this.form) {
             throw new Error('Form not created yet');
         }
@@ -79,7 +86,7 @@ export abstract class AbstractFormComponent<T extends IFormControls> implements 
         this.formUUID = this.formService.addToArray(arrayName, this.form, parentIndex);
 
         this.registeredArrayName = arrayName;
-        this.registeredParentIndex = parentIndex;
+        this.registeredParentIndex = this.getIndex(parentIndex);
         this.registered = true;
     }
 

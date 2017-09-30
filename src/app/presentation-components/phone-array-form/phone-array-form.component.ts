@@ -15,7 +15,7 @@ export interface IPhoneFormControls extends IFormControls {
 })
 export class PhoneArrayFormComponent extends FormArrayComponent<IPhoneFormControls> implements OnInit, OnDestroy, IAfterFormCreate {
     @Input() public phone: IPhone;
-    @Input() public parentId: string;
+    @Input() public parentId: string | FormGroup;
     @Output() public onRemove: EventEmitter<string> = new EventEmitter();
 
     public setFormControls(): IPhoneFormControls {
