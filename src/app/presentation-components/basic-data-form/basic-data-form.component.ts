@@ -22,7 +22,7 @@ export class BasicDataFormComponent implements OnInit, OnDestroy {
 
     @Input() public user: IUser;
     @Output() public onValidityChange: EventEmitter<boolean> = new EventEmitter();
-
+    @Output() public onValueChange: EventEmitter<any> = new EventEmitter();
     public form: FormGroup;
     public controls: IFormControls;
     private subs: Subscription[] = [];
@@ -50,7 +50,12 @@ export class BasicDataFormComponent implements OnInit, OnDestroy {
             this.form.statusChanges
                 .debounceTime(500)
                 .distinctUntilChanged().map(() => this.form.valid)
-                .subscribe((valid) => this.onValidityChange.emit(valid))
+                .subscribe((valid) => {
+                    this.onValidityChange.emit(valid);
+                    if (valid) {
+                        this.onValueChange.emit(this.form.value);
+                    }
+                })
         );
     }
 }

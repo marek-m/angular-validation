@@ -3,5 +3,6 @@
         *ngFor="let user of users; let i=index"
         [user]="user"
         (onValidityChange)="handleValidityChange(i, $event)"
+        (onValueChange)="handleValueChange($event)"
     ></app-basic-data-form>
 </div>

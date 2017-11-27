@@ -24,6 +24,10 @@ export class UserDetailsComponent implements OnInit {
         this.simpleValidity[idx] = valid;
     }
 
+    public handleValueChange(value) {
+        console.log(value);
+    }
+
     public get isValid(): boolean {
         return this.simpleValidity.every((valid) => valid);
     }
